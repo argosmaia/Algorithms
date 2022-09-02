@@ -64,7 +64,7 @@ void percorrer()
         aux = inicioL;
         while(aux != NULL)
         {
-            printf("%d", aux->info);
+            printf("\n%d", aux->info);
             aux = aux->prox;
         }
     }else{
@@ -75,13 +75,11 @@ void percorrer()
 int main()
 {
     int op, item, tam;
-    printf("Digite o tamanho da lista: ");
-    scanf("%i", &tam);
     printf("Bem vindo a lista encadeada, faça a tua opção: ");
-    printf("\n1 - Insere no inicio\n2 - Insere no fim\n3 - Percorre\n4 - Sair\nEscolha: ");
-    scanf("%i", &op);
     while(1)
     {
+        printf("\n1 - Insere no inicio\n2 - Insere no fim\n3 - Percorre\n4 - Sair\nEscolha: ");
+        scanf("%i", &op);
         switch(op)
         {
             case 1:
