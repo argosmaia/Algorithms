@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+//INCOMPLETO
+
 typedef struct no
 {
     int info;
@@ -73,20 +75,22 @@ void percorrer()
     }
 }
 
-int soma(/*struct no *p */)
+void soma()
 {
     int s = 0;
     no *p;
+    p = inicioL;
     if(!listavazia())
     {
         while(p != NULL)
         {
-            s += p->info;
+            s += s + p->info;
             p = p->prox;
         }
-        printf("%i", s);
+        printf("%i", s); 
+    }else{
+        printf("Lista vazia");
     }
-    return s;
 }
 
 int main()
