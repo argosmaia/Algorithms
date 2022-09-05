@@ -65,7 +65,7 @@ void percorrer()
         aux = inicioL;
         while(aux != NULL)
         {
-            printf("%d", aux->info);
+            printf("\nLista encadeada: %d", aux->info);
             aux = aux->prox;
         }
     }else{
@@ -85,9 +85,9 @@ void soma()
             s += s + p->info;
             p = p->prox;
         }
-        printf("%i", s); 
+        printf("\nSoma: %i", s); 
     }else{
-        printf("Lista vazia");
+        printf("\nLista vazia\n");
     }
 }
 
