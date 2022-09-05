@@ -1,8 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-//INCOMPLETO
-
 typedef struct no
 {
     int info;
