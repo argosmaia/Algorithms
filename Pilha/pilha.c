@@ -3,12 +3,6 @@
 #include<stdlib.h>
 #define MAX 10
 
-int topo = -1; int vet[MAX];
-
-void Empilha();
-void Desempilha();
-void Mostra();
-
 void Empilha()
 {
     int num;
