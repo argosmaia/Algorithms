@@ -1,83 +1,138 @@
 #include <stdio.h>
+#include <stdlib.h>
 #define SIZE 10
-void enfileirar();
-void desenfileirar();
-void mostrar();
-int fileira[SIZE];
-int Rear = -1;
-int Front = -1;
 
-void enfileirar()
-{
-	int inserir;
-	if (Rear == SIZE - 1)
-		printf("Fila Cheia\n");
-	else
-	{
-		if (Front == -1)
+typedef struct {
+    int dado[SIZE];
+    int frente;
+    int fim;
+} Fila;
 
-			Front = 0;
-		printf("\nElemento a inserir: ");
-		scanf("%d", &inserir);
-		Rear += 1;
-		fileira[Rear] = inserir;
-	}
+void inicializa(Fila* fila) {
+    fila->frente = -1;
+    fila->fim = -1;
 }
 
-void desenfileirar()
-{
-	if (Front == -1 || Front > Rear)
-	{
-		printf("\nFila Vazia\n");
-		return;
-	}
-	else
-	{
-		printf("Elemento deletado: %d\n", fileira[Front]);
-		Front = Front + 1;
-	}
+// Função para verificar se a fila está vazia
+int vazio(Fila* fila) {
+    return fila->frente == -1;
 }
 
-void mostrar()
-{
-	if (Front == -1)
-		printf("Fila Vazia\n");
-	else
-	{
-		printf("Fila: \n");
-		for (int i = Front; i <= Rear; i++)
-			printf("%d ", fileira[i]);
-		printf("\n");
-	}
+// Função para verificar se a fila está cheia
+int cheio(Fila* fila) {
+    return (fila->fim + 1) % SIZE == fila->frente;
 }
 
-int main()
-{
-	int ch;
-	while (1)
-	{
-		printf("\n1. Enfileirar\n");
-		printf("2. Desenfileirar\n");
-		printf("3. Mostrar\n");
-		printf("4. Sair\n");
-		printf("Escolha uma opção: ");
-		scanf("%d", &ch);
-		switch (ch)
-		{
-		case 1:
-			enfileirar();
-			break;
-		case 2:
-			desenfileirar();
-			break;
-		case 3:
-			mostrar();
-			break;
-		case 4:
-			printf("\nSaindo...");
-			exit(0);
-		default:
-			printf("Opção incorreta\n");
-		}
-	}
+void enfileirar(Fila* fila, int valor) {
+    if(cheio(fila)) {
+        printf("\nFila cheia!\n");
+        return;
+    }
+
+    if(vazio(fila)) {
+        fila->frente = 0;
+        fila->fim = 0;
+    } else {
+        fila->fim = (fila->fim + 1) % SIZE;
+    }
+
+    fila->dado[fila->fim] = valor;
+}
+
+void desenfileira(Fila* fila) {
+    if(vazio(fila)) {
+        printf("\nFila vazia!\n");
+        return;
+    }
+
+    if(fila->frente == fila->fim) {
+        fila->frente = -1;
+        fila->fim = -1;
+    } else {
+        fila->frente = (fila->frente + 1) % SIZE;
+    }
+}
+
+// Função para ver o elemento do início da fila
+void frente(Fila* fila) {
+    if (vazio(fila)) {
+        printf("A fila está vazia!\n");
+        return;
+    }
+
+    printf("Elemento do inicio da fila: %d\n", fila->dado[fila->frente]);
+}
+
+// Função para ver o elemento do fim da fila
+void fim(Fila* fila) {
+    if (vazio(fila)) {
+        printf("A fila está vazia!\n");
+        return;
+    }
+
+    printf("Elemento do fim da fila: %d\n", fila->dado[fila->fim]);
+}
+
+// Função para ver toda a fila
+void mostrar(Fila* fila) {
+    if (vazio(fila)) {
+        printf("A fila está vazia!\n");
+        return;
+    }
+
+    printf("Elementos da fila: ");
+    int i = fila->frente;
+    while (i != fila->fim) {
+        printf("%d ", fila->dado[i]);
+        i = (i + 1) % SIZE;
+    }
+    printf("%d\n", fila->dado[fila->fim]);
+}
+
+int main() {
+    Fila fila;
+    inicializa(&fila);
+    
+    int opcao, valor;
+    
+    while(1) {
+        printf("\n----- Menu de Opcoes -----\n");
+        printf("1. Enfileirar\n");
+        printf("2. Desenfileirar\n");
+        printf("3. Ver frente\n");
+        printf("4. Ver fim\n");
+        printf("5. Ver toda a fila\n");
+        printf("6. Sair\n");
+        printf("Digite sua opcao: ");
+        scanf("%d", &opcao);
+        
+        switch(opcao) {
+            case 1:
+                printf("Digite o valor para enfileirar: ");
+                scanf("%d", &valor);
+                enfileirar(&fila, valor);
+                break;
+            case 2:
+                desenfileira(&fila);
+                break;
+            case 3:
+                frente(&fila);
+                break;
+            case 4:
+                fim(&fila);
+                break;
+            case 5:
+                mostrar(&fila);
+                break;
+            case 6:
+                printf("Saindo...\n");
+                exit(0);
+                break;
+            default:
+                printf("Opcao invalida! Tente novamente.\n");
+                break;
+        }
+    }
+    
+    return 0;
 }
