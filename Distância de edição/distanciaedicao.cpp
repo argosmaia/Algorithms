@@ -36,7 +36,7 @@ int main() {
 
     cout << distanciaEdicao(A, B, A.size(), B.size()) << endl;
 
-    for(int i = 0; i <= A.size(); i++) delete[] dp[i];
+    for(int i = 0; i <= A.size(); i++) delete[] dp[i]; // erro nessa linha
 
     delete[] dp;
 
