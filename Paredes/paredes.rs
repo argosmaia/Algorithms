@@ -122,7 +122,7 @@ fn main() {
                 }
             }
             3 => break,
-            _ => println!("Opção inválida!);
+            _ => println!("Opção inválida!");
        }
   }
 },
