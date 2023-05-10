@@ -107,5 +107,24 @@ fn main() {
             2 => {
                 println!("Insira a linha e a coluna onde deseja inserir o azuleijo e a orientação (h para horizontal, v para vertical) (exemplo: 1 3 h): ");
                 input.clear();
-                io::stdin().read
+                io::stdin().read_line(&mut input).expect("Erro ao ler a entrada");
+                let parts: Vec<&str> = input.trim().split(' ').collect();
+                let linha: usize = parts[0].parse().expect("Erro ao ler a linha");
+                let coluna: usize = parts[1].parse().expect("Erro ao ler a coluna");
+                let orientacao: char = parts[2].chars().next().expect("Erro ao ler a orientação");
+    
+                if orientacao == 'h' {
+                    inserir_azuleijo(n, linha-1, coluna-1, 'h');
+                } else if orientacao == 'v' {
+                    inserir_azuleijo(n, linha-1, coluna-1, 'v');
+                } else {
+                    println!("Orientação inválida");
+                }
+            }
+            3 => break,
+            _ => println!("Opção inválida!);
+       }
+  }
+},
+
 // INCOMPLETO
