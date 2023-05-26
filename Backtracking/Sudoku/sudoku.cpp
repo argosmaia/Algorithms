@@ -68,6 +68,7 @@ int main() {
 
     while(true) {
         int row, col, num;
+        printGrid(grid);
         cout << "Enter row & col (space-separated): ";
         cin >> row >> col;
 
@@ -80,7 +81,7 @@ int main() {
             continue;
         }
 
-        if (isValidMove(grid, row - 1, col - 1, num)) {
+        if (isValid(grid, row - 1, col - 1, num)) {
             grid[row - 1][col - 1] = num;
         } else {
             cout << "Invalid move! Please try again." << endl;
