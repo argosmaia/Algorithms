@@ -1,7 +1,3 @@
-/* Future implementations:
-   1. Solve why can't inserting repetead elements
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -34,20 +30,12 @@ bool isNumberInColumn(const int grid[][9], int col, int num) {
     return false;
 }
 
-bool isNumberInMiniGrid(const int grid[][9], int startRow, int startCol, int num) {
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
-            if (grid[row + startRow][col + startCol] == num) {
-                return true;
-            }
-        }
-    }
-    return false;
+bool isValid(const int grid[][9], int row, int col, int num) {
+    return !isNumberInRow(grid, row, num) && !isNumberInColumn(grid, col, num);
 }
 
-bool isValid(const int grid[][9], int row, int col, int num) {
-    return !isNumberInRow(grid, row, num) && !isNumberInColumn(grid, col, num) &&
-           !isNumberInMiniGrid(grid, row - row % 3, col - col % 3, num);
+bool isValidUser(const int grid[][9], int row, int col, int num) {
+    return grid[row][col] == 0;
 }
 
 void generateGrid(int grid[][9]) {
@@ -123,13 +111,14 @@ int main() {
                 continue;
             }
 
-            if (isValid(grid, row - 1, col - 1, num)) {
-                grid[row - 1][col - 1] = num;
-                previousRow = row - 1;
-                previousCol = col - 1;
-            } else {
+            if (!isValidUser(grid, row - 1, col - 1, num)) {
                 printf("Invalid move! Please try again.\n");
+                continue;
             }
+
+            grid[row - 1][col - 1] = num;
+            previousRow = row - 1;
+            previousCol = col - 1;
 
             // Check if the game is won
             bool gameWon = true;
@@ -162,8 +151,7 @@ int main() {
             printf("\n");
             removeElement(grid, row - 1, col - 1);
         } else if (choice == 4) {
-            printf("Exiting the game.\n");
-            break;
+            exit(0);
         } else {
             printf("Invalid choice! Please try again.\n");
         }
