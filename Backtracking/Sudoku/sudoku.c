@@ -1,6 +1,5 @@
 /* Future implementations:
-   1. Solve why removePreviousMove() is not removing the last play automaticlly
-   2. Errors inserting
+   1. Solve why can't inserting repetead elements
 */
 
 #include <stdio.h>
