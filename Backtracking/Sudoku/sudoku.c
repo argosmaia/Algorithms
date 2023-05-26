@@ -3,6 +3,11 @@
 #include <stdbool.h>
 #include <time.h>
 
+/* Future implementations:
+   1. Solve why removePreviousMove() is not removing the last play automaticlly
+   2. Errors inserting
+*/
+
 void printGrid(const int grid[][9]) {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -54,13 +59,44 @@ void generateGrid(int grid[][9]) {
         }
     }
 
-    for (int i = 0; i < 20; i++) {
-        int row = rand() % 9;
-        int col = rand() % 9;
-        int num = rand() % 9 + 1;
-        if (isValid(grid, row, col, num)) {
-            grid[row][col] = num;
+    for (int i = 0; i < 9; i++) {
+        int count = rand() % 3 + 1; // Número de elementos a serem gerados nesta linha
+        int generated = 0; // Número de elementos gerados até agora
+        while (generated < count) {
+            int j = rand() % 9; // Coluna aleatória
+
+            // Se a célula já está preenchida, continue para a próxima iteração
+            if (grid[i][j] != 0) {
+                continue;
+            }
+
+            int num;
+            do {
+                num = rand() % 9 + 1; // Número aleatório
+            } while (!isValid(grid, i, j, num));
+
+            grid[i][j] = num;
+            generated++;
         }
+    }
+}
+
+
+void removePreviousMove(int grid[][9], int row, int col) {
+    if (row >= 0 && row < 9 && col >= 0 && col < 9 && grid[row][col] != 0) {
+        grid[row][col] = 0;
+    }
+}
+
+void removeElement(int grid[][9], int row, int col) {
+    if (row >= 0 && row < 9 && col >= 0 && col < 9) {
+        if (grid[row][col] != 0) {
+            printf("Cannot remove a generated number.\n");
+        } else {
+            printf("Position (%d, %d) is already empty.\n", row + 1, col + 1);
+        }
+    } else {
+        printf("Invalid position.\n");
     }
 }
 
@@ -71,40 +107,62 @@ int main() {
     printf("Sudoku Game\n\n");
 
     while (1) {
-        int row, col, num;
+        int choice;
         printGrid(grid);
-        printf("Enter row & col (space-separated): ");
-        scanf("%d %d", &row, &col);
+        printf("\n1. Insert number\n2. Remove previous move\n3. Remove element at position\n4. Quit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
 
-        printf("Number (1-9): ");
-        scanf("%d", &num);
-        printf("\n");
+        if (choice == 1) {
+            int row, col, num;
+            printf("Enter row & col (space-separated): ");
+            scanf("%d %d", &row, &col);
 
-        if (row < 1 || row > 9 || col < 1 || col > 9 || num < 1 || num > 9) {
-            printf("Invalid input! Please try again.\n");
-            continue;
-        }
+            printf("Number (1-9): ");
+            scanf("%d", &num);
+            printf("\n");
 
-        if (isValid(grid, row - 1, col - 1, num)) {
-            grid[row - 1][col - 1] = num;
-        } else {
-            printf("Invalid move! Please try again.\n");
-        }
+            if (row < 1 || row > 9 || col < 1 || col > 9 || num < 1 || num > 9) {
+                printf("Invalid input! Please try again.\n");
+                continue;
+            }
 
-        // Check if the game is won
-        bool gameWon = true;
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (grid[i][j] == 0) {
-                    gameWon = false;
-                    break;
+            if (isValid(grid, row - 1, col - 1, num)) {
+                grid[row - 1][col - 1] = num;
+            } else {
+                printf("Invalid move! Please try again.\n");
+            }
+
+            // Check if the game is won
+            bool gameWon = true;
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    if (grid[i][j] == 0) {
+                        gameWon = false;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (gameWon) {
-            printf("Congratulations! You won the game.\n");
+            if (gameWon) {
+                printf("Congratulations! You won the game.\n");
+                break;
+            }
+        } else if (choice == 2) {
+            int row, col;
+            printf("\n");
+            removePreviousMove(grid, row - 1, col - 1);
+        } else if (choice == 3) {
+            int row, col;
+            printf("Enter row & col (space-separated): ");
+            scanf("%d %d", &row, &col);
+            printf("\n");
+            removeElement(grid, row - 1, col - 1);
+        } else if (choice == 4) {
+            printf("Exiting the game.\n");
             break;
+        } else {
+            printf("Invalid choice! Please try again.\n");
         }
     }
 
