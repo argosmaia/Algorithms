@@ -1,12 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <time.h>
-
 /* Future implementations:
    1. Solve why removePreviousMove() is not removing the last play automaticlly
    2. Errors inserting
 */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
 
 void printGrid(const int grid[][9]) {
     for (int i = 0; i < 9; i++) {
@@ -65,11 +65,6 @@ void generateGrid(int grid[][9]) {
         while (generated < count) {
             int j = rand() % 9; // Coluna aleatória
 
-            // Se a célula já está preenchida, continue para a próxima iteração
-            if (grid[i][j] != 0) {
-                continue;
-            }
-
             int num;
             do {
                 num = rand() % 9 + 1; // Número aleatório
@@ -80,7 +75,6 @@ void generateGrid(int grid[][9]) {
         }
     }
 }
-
 
 void removePreviousMove(int grid[][9], int row, int col) {
     if (row >= 0 && row < 9 && col >= 0 && col < 9 && grid[row][col] != 0) {
@@ -106,6 +100,9 @@ int main() {
 
     printf("Sudoku Game\n\n");
 
+    int previousRow = -1;
+    int previousCol = -1;
+
     while (1) {
         int choice;
         printGrid(grid);
@@ -129,6 +126,8 @@ int main() {
 
             if (isValid(grid, row - 1, col - 1, num)) {
                 grid[row - 1][col - 1] = num;
+                previousRow = row - 1;
+                previousCol = col - 1;
             } else {
                 printf("Invalid move! Please try again.\n");
             }
@@ -149,9 +148,14 @@ int main() {
                 break;
             }
         } else if (choice == 2) {
-            int row, col;
-            printf("\n");
-            removePreviousMove(grid, row - 1, col - 1);
+            if (previousRow != -1 && previousCol != -1) {
+                removePreviousMove(grid, previousRow, previousCol);
+                previousRow = -1;
+                previousCol = -1;
+                printf("Previous move removed.\n");
+            } else {
+                printf("No previous move found.\n");
+            }
         } else if (choice == 3) {
             int row, col;
             printf("Enter row & col (space-separated): ");
