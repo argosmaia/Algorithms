@@ -75,7 +75,32 @@ int main() {
         cin >> num;
         cout << endl;
       
-      //INCOMPLETE
+      /if (row < 1 || row > 9 || col < 1 || col > 9 || num < 1 || num > 9) {
+            cout << "Invalid input! Please try again." << endl;
+            continue;
+        }
+
+        if (isValidMove(grid, row - 1, col - 1, num)) {
+            grid[row - 1][col - 1] = num;
+        } else {
+            cout << "Invalid move! Please try again." << endl;
+        }
+
+        // Check if the game is won
+        bool gameWon = true;
+        for (const auto& row : grid) {
+            for (int num : row) {
+                if (num == 0) {
+                    gameWon = false;
+                    break;
+                }
+            }
+        }
+
+        if (gameWon) {
+            cout << "Congratulations! You won the game." << endl;
+            break;
+        }
     }
 
     return 0;
