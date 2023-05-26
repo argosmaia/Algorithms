@@ -75,7 +75,7 @@ int main() {
         cin >> num;
         cout << endl;
       
-      /if (row < 1 || row > 9 || col < 1 || col > 9 || num < 1 || num > 9) {
+      if (row < 1 || row > 9 || col < 1 || col > 9 || num < 1 || num > 9) {
             cout << "Invalid input! Please try again." << endl;
             continue;
         }
