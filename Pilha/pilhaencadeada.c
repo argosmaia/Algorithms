@@ -18,37 +18,37 @@ typedef struct {
 } Pilha;
 
 // Função para inicializar a pilha
-void inicializa_pilha(Pilha *p) {
+void inicializaPilha(Pilha *p) {
     p->topo = NULL; // Define o topo como NULL para indicar pilha vazia
 }
 
 // Função para verificar se a pilha está vazia
-bool is_vazia(Pilha *p) {
+bool vazia(Pilha *p) {
     return p->topo == NULL; // Retorna true se o topo for NULL, indicando pilha vazia
 }
 
 // Função para inserir uma string na pilha
-void inserir_string(Pilha *p, char *str) {
-    Node *novo_no = (Node *) malloc(sizeof(Node)); // Aloca memória para um novo nó
-    if (novo_no == NULL) {
+void inserirString(Pilha *p, char *str) {
+    Node *novoNo = (Node *) malloc(sizeof(Node)); // Aloca memória para um novo nó
+    if (novoNo == NULL) {
         printf("Erro: Memória insuficiente\n");
         exit(1);
     }
-    novo_no->dados = strdup(str); // Aloca memória para a string e a insere no novo nó
-    novo_no->proximo = p->topo; // O próximo do novo nó aponta para o antigo topo
-    p->topo = novo_no; // Atualiza o topo para apontar para o novo nó
+    novoNo->dados = strdup(str); // Aloca memória para a string e a insere no novo nó
+    novoNo->proximo = p->topo; // O próximo do novo nó aponta para o antigo topo
+    p->topo = novoNo; // Atualiza o topo para apontar para o novo nó
 }
 
 // Função para verificar se uma string é um número real (float) ou inteiro (int)
-bool is_numero(char *str) {
+bool numero(char *str) {
     char *endptr;
     strtod(str, &endptr); // Converte a string para double e armazena o ponteiro para o próximo caractere em endptr
     return *endptr == '\0'; // Retorna true se o próximo caractere for o caractere nulo, indicando que a string é um número válido
 }
 
 // Função para converter uma string para número real (float) ou inteiro (int)
-void converter_numero(char *str) {
-    if (is_numero(str)) {
+void converterNumero(char *str) {
+    if (numero(str)) {
         int inteiro = strtol(str, NULL, 10); // Converte a string para inteiro
         printf("Número inteiro: %d\n", inteiro);
     } else {
@@ -58,39 +58,38 @@ void converter_numero(char *str) {
 }
 
 // Função para remover o topo da pilha
-void remover_topo(Pilha *p) {
-    if (is_vazia(p)) {
+void removerTopo(Pilha *p) {
+    if (vazia(p)) {
         printf("Erro: Pilha vazia\n");
         return;
     }
-    Node *no_removido = p->topo; // Guarda o ponteiro do nó que será removido
+    Node *noRemovido = p->topo; // Guarda o ponteiro do nó que será removido
     p->topo = p->topo->proximo; // Atualiza o topo para apontar para o próximo nó
-    free(no_removido->dados); // Libera a memória alocada para a string do nó removido
-    free(no_removido); // Libera a memória alocada para o nó removido
+    free(noRemovido->dados); // Libera a memória alocada para a string do nó removido
+    free(noRemovido); // Libera a memória alocada para o nó removido
 }
 
 // Função para verificar o topo da pilha
-void ver_topo(Pilha *p) {
-    if (is_vazia(p))
-        printf("Erro: Pilha vazia\n");
-        return;
-    printf("Topo da pilha: %s\n", p->dados[p->topo]);
+void verTopo(Pilha *p) {
+    if (vazia(p))   return "Erro: Pilha vazia\n";
+    printf("Topo da pilha: %s\n", p->topo->dados);
 }
 
 // Função para visualizar toda a pilha
-void ver_pilha(Pilha *p) {
-    if (is_vazia(p))
-        printf("Pilha vazia\n");
-        return;
+void verPilha(Pilha *p) {
+    if (vazia(p))   return "Erro: Pilha vazia\n";
     printf("Conteúdo da pilha:\n");
-    for (int i = p->topo; i >= 0; i--) {
-        printf("%s\n", p->dados[i]);
+    Node *atual = p->topo;
+    while (atual != NULL) {
+        printf("%s\n", atual->dados);
+        atual = atual->proximo;
     }
 }
 
+
 int main() {
     Pilha pilha;
-    inicializa_pilha(&pilha); // Inicializa a pilha
+    inicializaPilha(&pilha); // Inicializa a pilha
     int opcao;
     char entrada[100];
     while (1) {
@@ -113,30 +112,30 @@ int main() {
             case 1:
                 printf("Digite a string a ser inserida: ");
                 scanf("%s", entrada);
-                inserir_string(&pilha, entrada);
+                inserirString(&pilha, entrada);
                 break;
         
             case 2:
         	    printf("Digite a string a ser verificada: ");
         	    scanf("%s", entrada);
-            	if (is_numero(entrada)) {
-            		converter_numero(entrada);
-        	    	inserir_string(&pilha, entrada);
+            	if (numero(entrada)) {
+            		converterNumero(entrada);
+        	    	inserirString(&pilha, entrada);
         	    } else {
-        		    inserir_string(&pilha, entrada);
+        		    inserirString(&pilha, entrada);
         	    }
         	break;
     
             case 3:
-                remover_topo(&pilha);
+                removerTopo(&pilha);
                 break;
     
             case 4:
-                ver_topo(&pilha);
+                verTopo(&pilha);
                 break;
     
             case 5:
-                ver_pilha(&pilha);
+                verPilha(&pilha);
                 break;
     
             default:
