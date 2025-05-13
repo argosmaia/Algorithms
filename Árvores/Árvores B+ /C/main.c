@@ -7,6 +7,7 @@
 // DEFINIÇÕES DE "CLASSES"
 typedef struct Node {
   int *dados; // Array de chaves
+  int arvore;
   struct Node** filhos; // Array de ponteiros filhos da arvore
   int n; // numero de chaves de uma arvore
   bool folhas;
@@ -224,11 +225,78 @@ void emprestaDoProximo(Node* no, int indice) {
 
   for(int i = 1; i < irmao->n; i++) irmao->dados[i - 1] = irmao->dados[i];
   if(!irmao->folha) for(int i = 1; i <= irmao->n; i++) irmao->filhos[i - 1] = irmao->filhos[i];
+
+  filho->n += 1;
+  irmao->n -= 1;
 }
 
-void mesclar() {}
+void mesclar(Node* no, int indice) {
+  Node* filho = no->filhos[indice];
+  Node* irmao = no->filhos[indice - 1];
+
+  filho->dados[filho->n] = node->dados[indice];
+  if(!filho->folha) filho->filhos[filho->n + 1] = irmao->filhos[0];
+  for(int i = 0; i < irmao->n; i++) filho->dados[i + filho->n + 1] = irmao->dados[i];
+  for(int i = indice + 2; i < no->n; i++) no->dados[i - 1] = no->filhos[i];
+
+  filho->n += irmao->n + 1;
+  no->n--;
+
+  free(irmao);
+}
 
 int main() {
-  raiz = inicializa();
+  int opcao, valor;
+  ArvoreBmais* minhaArvore = (ArvoreBmais*)malloc(sizeof(ArvoreBmais));
+  minhaArvore->arvore = GRAU;
+  minhaArvore->raiz = criaNode(GRAU, true);
+  while (1) {
+    printf("\n--- MENU ARVORE B+ ---\n");
+    printf("1. Inserir valor\n");
+    printf("2. Mostrar árvore\n");
+    printf("3. Procurar valor\n");
+    printf("4. Remover valor\n");
+    printf("0. Sair\n");
+    printf("Escolha uma opção: ");
+    scanf("%d", &opcao);
+
+    switch (opcao) {
+      case 1:
+        printf("Digite o valor a inserir: ");
+        scanf("%d", &valor);
+        inserir(minhaArvore, valor);
+        break;
+
+      case 2:
+        printf("Árvore B+: ");
+        mostrar(minhaArvore->raiz);
+        break;
+
+      case 3:
+        printf("Digite o valor a procurar: ");
+        scanf("%d", &valor);
+        if (procurar(minhaArvore->raiz, valor)) {
+          printf("Valor %d encontrado na árvore!\n", valor);
+        } else {
+          printf("Valor %d NÃO encontrado.\n", valor);
+        }
+        break;
+
+      case 4:
+        printf("Digite o valor a remover: ");
+        scanf("%d", &valor);
+        deletar(minhaArvore, valor);
+        break;
+
+      case 0:
+        printf("Encerrando o programa.\n");
+        return 0;
+
+      default:
+        printf("Opção inválida.\n");
+    }
+  }
+
   return 0;
+}
 }
