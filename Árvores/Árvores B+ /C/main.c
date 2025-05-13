@@ -52,11 +52,11 @@ Node* inicializa() {
 //   return false;
 // }
 
-Node* criaNode(int arvore, bool folha) { // Cria um nó para a árvore
+Node* criaNode(int arvore, bool folhas) { // Cria um nó para a árvore
   Node* novoNo = (Node*)malloc(sizeof(Node));
   novoNo->arvore = arvore;
-  novoNo->folha = folha;
-  novoNo->dados = (int*)malloc((2*t-1) * sizeof(int));
+  novoNo->folhas = folhas;
+  novoNo->dados = (int*)malloc((2*arvore-1) * sizeof(int));
   novoNo->filhos = (Node**)malloc((2 * arvore) * sizeof(Node*));
   novoNo->n = 0;
   novoNo->prox = NULL;
@@ -68,15 +68,16 @@ Node* criaArvore(int arvore) {
   ArvoreBmais* arvorebmais = (ArvoreBmais*)malloc(sizeof(ArvoreBmais));
   arvorebmais->arvore = arvore;
   arvorebmais->raiz = criaNode(arvore, true);
+  return arvorebmais;
 }
 
 void dividir(Node* pai, int i, Node* filho) {
-  Node* novoFilho = criaNode(arvore, filho->folha);
   int arvore = filho->arvore;
+  Node* novoFilho = criaNode(arvore, filho->folhas);
   novoFilho->n = arvore - 1;
 
-  for(int j = 0; j < arvore - 1; j++) novoFilho->dados = filho->filhos[j + arvore];
-  if(!filho->folha) for(int j = 0; j < arvore; j++) novoFilho->filhos[j] = filho->filhos[j + arvore];
+  for(int j = 0; j < arvore - 1; j++) novoFilho->dados[j] = filho->dados[j + arvore];
+  if(!filho->folhas) for(int j = 0; j < arvore; j++) novoFilho->filhos[j] = filho->filhos[j + arvore];
   filho->n = arvore - 1;
 
   for(int j = pai->n; j >= i + 1; j--) pai->filhos[j + 1] = pai->filhos[j];
@@ -89,7 +90,7 @@ void dividir(Node* pai, int i, Node* filho) {
 
 void folhaVazia(Node* no, int dado) {
   int i = no->n - 1;
-  if(no->folha) {
+  if(no->folhas) {
     while(i >= 0 && no->dados[i] > dado) {
       no->dados[i + 1] = no->dados[i];
       i--;
@@ -113,28 +114,30 @@ void inserir(ArvoreBmais *arvorebmais, int dados) {
     Node* novaRaiz = criaNode(arvorebmais->arvore, false);
     novaRaiz->filhos[0] = pRaiz;
     dividir(novaRaiz, 0, pRaiz);
-    folhaVazia(novaRaiz, dado);
-    arvorebmais->pRaiz = novaRaiz;
+    folhaVazia(novaRaiz, dados);
+    arvorebmais->raiz = novaRaiz;
   } else {
-    folhaVazia(pRaiz, dado);
+    folhaVazia(pRaiz, dados);
   }
 }
 
 void mostrar(Node* no) {
+  int i = 0;
   if(no == NULL) return;
   printf("(");
-  for(int i = 0; i < no->n; i++) {
-    if(!no->folha) mostrar(no->filhos[i]);
+  for(i = 0; i < no->n; i++) {
+    if(!no->folhas) mostrar(no->filhos[i]);
     printf("%d", no->dados[i]);
   }
-  if(!no->folha) mostrar(no->filhos[i]);
-  printf(")\n", );
+  if(!no->folhas) mostrar(no->filhos[i]);
+  printf(")\n");
 }
 
 bool procurar(Node* no, int dado) {
-  while(int i < no->n && dado > no->dados[i]) i++;
-  if(int i < no->n && dado == no->dados[i]) return true;
-  if(no->folha) return false;
+  int i = 0;
+  while(i < no->n && dado > no->dados[i]) i++;
+  if(i < no->n && dado == no->dados[i]) return true;
+  if(no->folhas) return false;
   return procurar(no->filhos[i], dado);
 }
 
@@ -149,8 +152,8 @@ void deletar(ArvoreBmais* arvorebmais, int dado) {
   deletaRecursivo(pRaiz, dado);
 
   // Se uma arvore não tem mais raízes, o primeiro filho é a nova raíz
-  if(pRaiz->n == 0 && !pRaiz->folha) {
-    arvorebmais->pRaiz = pRaiz->filhos[0];
+  if(pRaiz->n == 0 && !pRaiz->folhas) {
+    arvorebmais->raiz = pRaiz->filhos[0];
     free(pRaiz);
   }
 }
@@ -158,7 +161,7 @@ void deletar(ArvoreBmais* arvorebmais, int dado) {
 void deletaRecursivo(Node* no, int dado) {
   int indice = buscaIndexDado(no, dado);
   if(indice < no->n && no->dados[indice] == dado) {
-    if(no->folha) {
+    if(no->folhas) {
       removerDaFolha(no, indice);
     } else {
       int antecessor = getAntecessor(no, indice);
@@ -166,7 +169,7 @@ void deletaRecursivo(Node* no, int dado) {
       deletaRecursivo(no->filhos[indice], antecessor); // Remoção recursiva
     }
   } else {
-    if(no->folha) {
+    if(no->folhas) {
       printf("%d não foi achado no índice\n", dado); // Se não achar nada, retorna um erro
       return;
     }
@@ -187,12 +190,12 @@ void removerDaFolha(Node* no, int indice) {
 
 int getAntecessor(Node* no, int indice) {
   Node* atual = no->filhos[indice];
-  while(!atual->folha) atual = atual->filhos[indice];
+  while(!atual->folhas) atual = atual->filhos[indice];
   return atual->dados[atual->n - 1];
 }
 
 void preenche(Node* no, int indice) {
-  if(indice != 0 && no->filhos[indice - 1]->n >= n->arvore) {
+  if(indice != 0 && no->filhos[indice - 1]->n >= no->arvore) {
     emprestaDoAnterior(no, indice);
   } else if(indice != no->n && no->filhos[indice + 1]->n >= no->arvore) {
     emprestaDoProximo(no, indice);
@@ -206,10 +209,10 @@ void emprestaDoAnterior(Node* no, int indice) {
   Node* filho = no->filhos[indice];
   Node* irmao = no->filhos[indice - 1];
 
-  for(int i = filho->n; n - 1; i >= 0; i--) filho->dados[indice + 1] = filho->filhos[i];
-  if(!filho->folha) for(int i = filho->n; i >= 0; i--) filho->filhos[i + 1] = filho->filhos[i];
+  for(int i = filho->n - 1; i >= 0; i--) filho->dados[indice + 1] = irmao->dados[irmao->n - 1];
+  if(!filho->folhas) for(int i = filho->n; i >= 0; i--) filho->filhos[i + 1] = filho->filhos[i];
   filho->dados[0] = no->dados[indice + 1];
-  if(!filho->folha) filho->filhos[0] = irmao->dados[irmao->n - 1];
+  if(!filho->folhas) filho->filhos[0] = irmao->dados[irmao->n - 1];
   no->dados[indice - 1] = irmao->dados[irmao->n - 1];
   filho->n += 1;
   irmao->n -= 1;
@@ -220,11 +223,11 @@ void emprestaDoProximo(Node* no, int indice) {
   Node* irmao = no->filhos[indice + 1];
 
   filho->dados[(filho->n)] = no->dados[indice];
-  if(!filho->folha) filho->filhos[(filho->n) + 1] = irmao->filhos[0];
+  if(!filho->folhas) filho->filhos[(filho->n) + 1] = irmao->filhos[0];
   no->dados[indice] = irmao->dados[0];
 
   for(int i = 1; i < irmao->n; i++) irmao->dados[i - 1] = irmao->dados[i];
-  if(!irmao->folha) for(int i = 1; i <= irmao->n; i++) irmao->filhos[i - 1] = irmao->filhos[i];
+  if(!irmao->folhas) for(int i = 1; i <= irmao->n; i++) irmao->filhos[i - 1] = irmao->filhos[i];
 
   filho->n += 1;
   irmao->n -= 1;
@@ -234,8 +237,8 @@ void mesclar(Node* no, int indice) {
   Node* filho = no->filhos[indice];
   Node* irmao = no->filhos[indice - 1];
 
-  filho->dados[filho->n] = node->dados[indice];
-  if(!filho->folha) filho->filhos[filho->n + 1] = irmao->filhos[0];
+  filho->dados[filho->n] = no->dados[indice];
+  if(!filho->folhas) filho->filhos[filho->n + 1] = irmao->filhos[0];
   for(int i = 0; i < irmao->n; i++) filho->dados[i + filho->n + 1] = irmao->dados[i];
   for(int i = indice + 2; i < no->n; i++) no->dados[i - 1] = no->filhos[i];
 
@@ -298,5 +301,4 @@ int main() {
   }
 
   return 0;
-}
 }
