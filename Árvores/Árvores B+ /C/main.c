@@ -64,7 +64,7 @@ Node* criaNode(int arvore, bool folhas) { // Cria um nó para a árvore
   return novoNo;
 }
 
-Node* criaArvore(int arvore) {
+ArvoreBmais* criaArvore(int arvore) {
   ArvoreBmais* arvorebmais = (ArvoreBmais*)malloc(sizeof(ArvoreBmais));
   arvorebmais->arvore = arvore;
   arvorebmais->raiz = criaNode(arvore, true);
@@ -110,7 +110,7 @@ void folhaVazia(Node* no, int dado) {
 
 void inserir(ArvoreBmais *arvorebmais, int dados) {
   Node* pRaiz = arvorebmais->raiz;
-  if(pRaiz->n = 2 * arvorebmais->arvore - 1) {
+  if(pRaiz->n == 2 * arvorebmais->arvore - 1) {
     Node* novaRaiz = criaNode(arvorebmais->arvore, false);
     novaRaiz->filhos[0] = pRaiz;
     dividir(novaRaiz, 0, pRaiz);
@@ -237,16 +237,25 @@ void mesclar(Node* no, int indice) {
   Node* filho = no->filhos[indice];
   Node* irmao = no->filhos[indice - 1];
 
-  filho->dados[filho->n] = no->dados[indice];
-  if(!filho->folhas) filho->filhos[filho->n + 1] = irmao->filhos[0];
-  for(int i = 0; i < irmao->n; i++) filho->dados[i + filho->n + 1] = irmao->dados[i];
-  for(int i = indice + 2; i < no->n; i++) no->dados[i - 1] = no->filhos[i];
+  // Puxar o separador do pai
+  irmao->dados[irmao->n] = no->dados[indice - 1];
+  // Copiar os dados do filho para o irmao
+  for(int i = 0; i < filho->n; i++) irmao->dados[irmao->n + 1 + i] = filho->dados[i];
+  // Se não for folha, copiar os filhos também
+  if (!filho->folhas) {
+    for(int i = 0; i <= filho->n; i++) irmao->filhos[irmao->n + 1 + i] = filho->filhos[i];
+  }
 
-  filho->n += irmao->n + 1;
+  irmao->n += filho->n + 1;
+
+  // Mover os dados e ponteiros filhos do nó pai
+  for(int i = indice; i < no->n; i++) no->dados[i - 1] = no->dados[i];
+  for(int i = indice + 1; i <= no->n; i++)  no->filhos[i - 1] = no->filhos[i];
   no->n--;
-
-  free(irmao);
+  // Liberar memória do filho mesclado
+  free(filho);
 }
+
 
 int main() {
   int opcao, valor;
